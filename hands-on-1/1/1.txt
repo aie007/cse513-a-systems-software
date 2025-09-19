@@ -1,0 +1,54 @@
+-------------------------------------------------------------------------------
+Program: 1
+Author: Aieshah Nasir
+Description: Create the following types of files using shell commands and system calls - 
+	     a) soft link
+	     b) hard link
+	     c) FIFO
+Date: 22/08/2025
+-------------------------------------------------------------------------------
+
+a) soft link:
+
+A soft link (also known as a Symbolic link) acts as a pointer or a reference to the file name. 
+It does not access the data available in the original file. If the earlier file is deleted, the soft link will point to a file that does not exist anymore.
+
+-------------------------------------------------------------------------------
+nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/hands-on-1/1$ ln -s 1.txt sftlnk
+nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/hands-on-1/1$ ls -l 1.txt sftlnk
+-rw-rw-r-- 2 nasir nasir 35 Aug 14 11:04 1.txt
+lrwxrwxrwx 1 nasir nasir  5 Aug 21 15:18 sftlnk -> 1.txt
+-------------------------------------------------------------------------------
+
+b) hard link:
+
+A hard link acts as a copy (mirrored) of the selected file. It accesses the data available in the original file. 
+If the earlier selected file is deleted, the hard link to the file will still contain the data of that file.
+
+-------------------------------------------------------------------------------
+nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/hands-on-1/1$ ln 1.txt hrdlnk
+nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/hands-on-1/1$ ls -l 1.txt hrdlnk
+-rw-rw-r-- 3 nasir nasir 37 Aug 21 16:26 1.txt
+-rw-rw-r-- 3 nasir nasir 37 Aug 21 16:26 hrdlnk
+-------------------------------------------------------------------------------
+
+c) FIFO:
+
+A FIFO file allows two or more processes to communicate by reading from and writing to the same file. Also known as the named pipe - used in interprocess communication. 
+
+-------------------------------------------------------------------------------
+terminal 1:
+
+nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/hands-on-1/1$ mkfifo newfifo
+nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/hands-on-1/1$ ls -l newfifo
+prw-rw-r-- 1 nasir nasir 0 Aug 22 22:25 newfifo
+nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/hands-on-1/1$ file newfifo
+newfifo: fifo (named pipe)
+nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/hands-on-1/1$ echo 'hi from the other side' > newfifo
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+terminal 2:
+
+nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/hands-on-1/1$ cat newfifo
+hi from the other side
+-------------------------------------------------------------------------------
