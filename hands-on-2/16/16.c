@@ -1,42 +1,57 @@
 /**
  * Program: 16.c
  * Author: Aieshah Nasir
- * Description: Program to send and receive data from parent to child 
- * 		and vice versa. use two array communication.
- * Date: 02/09/2025
+ * Description: program to send and receive data from parent to child and 
+ * 		vice versa. use two way communication
+ * Date: 29/09/2025
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
-#include <sys/wait.h>
+#include <string.h>
 
-int main(void) {
-	int fd[2][2];
-	char buf1[1024];
-	char buf2[1024];
-	pipe(fd[0]); // fd1
-	pipe(fd[1]); // fd2
-	if(!fork()) {
-		close(fd[0][1]); // close write of fd1
-		close(fd[1][0]); // close read of fd2
-		read(fd[0][0], buf1, sizeof(buf1)); // reads from fd1
-		printf("%s\n", buf1);
-		write(fd[1][1], buf2, sizeof(buf2));// writes to fd2
+int main() {
+	int pipe1[2], pipe2[2];
+	char *m1 = "hello child";
+	char *m2 = "hii parent";
+	char buf[100];
+
+	if (pipe(pipe1) == -1 || pipe(pipe2) == -1) {
+		perror("pipe");
+		exit(1);
+	}
+
+	int p;
+	p = fork();
+	if (p < 0) {
+		perror("fork");
+		exit(1);
+	}
+	else if (p == 0) {
+		close(pipe1[1]);
+		close(pipe2[0]);
+		write(pipe2[1], m1, sizeof(m1));
+		read(pipe1[0], buf, sizeof(buf));
+		printf("Read in child: %s\n", buf);
+		close(pipe1[0]);
+		close(pipe2[1]);
 	}
 	else {
-		close(fd[0][0]); // close read of fd1
-		close(fd[1][1]); // close write of fd2
-		write(fd[1][0], buf2, sizeof(buf2)); // writes to fd1
-		read(fd[0][1], buf1, sizeof(buf1));// reads from fd2
-		printf("%s\n", buf1);
-		wait(0);
+		close(pipe2[1]);
+		close(pipe1[0]);
+		write(pipe1[1], m2, sizeof(m2));
+		read(pipe2[0], buf, sizeof(buf));
+		printf("Read in parent: %s\n", buf);
+		close(pipe2[0]);
+		close(pipe1[1]);
 	}
 	return 0;
 }
 
 /**
- * Smaple Output:
- * nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/Documents/hands-on-2/15$ ./a.out
- * read in child (pid=5309, ppid=5308): Hii
+Sample Output:
+nasir@nasir-HP-Pavilion-Laptop-14-dv0xxx:~/Documents/hands-on-2/16$ ./a.out
+Read in child: hii parent
+Read in parent: hello child
  */
-

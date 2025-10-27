@@ -1,20 +1,52 @@
-#include <stdio.h>
+/**
+ * Program: 33 (client.c)
+ * Author: Aieshah Nasir
+ * Description: Write a program to communicate between two machines using socket
+ * Date: 01/10/2025
+ */
+
+#include <sys/types.h>
+#include <sys/socket.h> 
+#include <netinet/ip.h> 
+#include <stdio.h>      
+#include <unistd.h>
 #include <stdlib.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+     
+void main(void) {
+    	int socktd=socket(AF_INET,SOCK_STREAM,0);
+    	if(socktd==-1){
+        	perror("Error when creating socket");
+    		exit(1);
+	}
+    	printf("Socket created\n");
 
-int main(void) {
-	char buf[1024];
-	char *hello = "hello, server! i'm the client!";
-	struct sockaddr_in serv;
-	sd = socket (AF_INET, SOCK_STREAM, 0);
+    	// assigning server info
+   	 struct sockaddr_in address;
+    	address.sin_addr.s_addr=htonl(INADDR_ANY);//host to network short
+    	address.sin_family=AF_INET;
+    	address.sin_port=htons(8080);
 
-	serv.sin_family = AF_INET;
-	serv.sin_addr.s_addr = inet_addr (“ser ip”);
-	serv.sin_port = htons (5050);
+    	// make connection to the server
+    	int connectionS = connect(socktd, (struct sockaddr *)&address, sizeof(address));
 
-	connect (sd, &server, sizeof  (server));
-	int n = read(sd, );
+    	if(connectionS==-1){
+        	perror("Error while establishing connection");
+    		exit(1);
+	}
+    
+    	printf("Connection with server established");
 
-	return 0;
+    	char buf[100];
+    	// read fron server
+    	read(socktd,buf,100);
+    	printf("Data from server: %s\n",buf);
+
+    	printf("Write massage for server: ");
+    	scanf("%[^\n]",buf);
+
+    	write(socktd,buf,sizeof(buf));
+    	printf("Data sent to server");
+
+    	// closing socket
+    	close(socktd);
 }
