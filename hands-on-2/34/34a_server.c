@@ -58,7 +58,7 @@ void main(void) {
             {
                 // In child
                 char buf[100];
-                printf("Write massage form server to client: \n");
+                printf("Type message from server to client: \n");
                 scanf("%[^\n]", buf);
                 // write fron server to connection fd
                 write(connectionfd, buf, sizeof(buf));
