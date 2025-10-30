@@ -13,8 +13,8 @@
 #include <unistd.h>
 
 void main(void) {
-    int socktd = socket(AF_INET, SOCK_STREAM, 0);
-    if (socktd == -1)
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd == -1)
     {
         perror("Erroe when creating socket");
         _exit(0);
@@ -28,9 +28,9 @@ void main(void) {
     address.sin_port = htons(8080);
 
     // make connection to the server
-    int connectionS = connect(socktd, (struct sockaddr *)&address, sizeof(address));
+    int conn = connect(sockfd, (struct sockaddr *)&address, sizeof(address));
 
-    if (connectionS == -1)
+    if (conn == -1)
     {
         perror("Error while establishing Connection\n");
         _exit(0);
@@ -40,15 +40,15 @@ void main(void) {
 
     char buf[100];
     // read fron server
-    read(socktd, buf, 100);
+    read(sockfd, buf, 100);
     printf("Data from server: %s\n", buf);
 
-    printf("Write massage for server: \n");
+    printf("Write message for server from client: \n");
     scanf("%[^\n]", buf);
 
-    write(socktd, buf, sizeof(buf));
+    write(sockfd, buf, sizeof(buf));
     printf("Data sent to server\n");
 
     // closing socket
-    close(socktd);
+    close(sockfd);
 }
